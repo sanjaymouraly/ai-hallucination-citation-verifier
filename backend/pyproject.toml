@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "verity-evidence-checker"
+version = "0.1.0"
+description = "Traceable evidence-support assessment for AI-generated claims and citations"
+requires-python = ">=3.11"
+readme = "../README.md"
+license = { text = "MIT" }
+authors = [{ name = "Sanjay Mouraly", email = "sanjaymouraly@users.noreply.github.com" }]
+dependencies = [
+  "fastapi==0.116.1",
+  "uvicorn[standard]==0.35.0",
+  "sqlalchemy==2.0.43",
+  "alembic==1.16.4",
+  "httpx==0.28.1",
+  "httpcore==1.0.9",
+  "beautifulsoup4==4.13.5",
+  "python-multipart==0.0.20",
+  "python-docx==1.2.0",
+  "pymupdf==1.26.4",
+  "cryptography==45.0.6",
+  "psycopg[binary]==3.2.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==8.4.1", "pytest-cov==6.2.1", "ruff==0.12.10", "mypy==1.17.1"]
+local-models = ["sentence-transformers==5.1.0", "transformers==4.55.4", "torch>=2.6"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+
+[tool.ruff]
+line-length = 140
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501", "B008"]
+
+[tool.mypy]
+python_version = "3.11"
+check_untyped_defs = true
+warn_return_any = true
+warn_unused_ignores = true
+ignore_missing_imports = true
+
+[project.urls]
+Homepage = "https://github.com/sanjaymouraly/ai-hallucination-citation-verifier"
+Repository = "https://github.com/sanjaymouraly/ai-hallucination-citation-verifier"
+Issues = "https://github.com/sanjaymouraly/ai-hallucination-citation-verifier/issues"

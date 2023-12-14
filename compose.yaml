@@ -1,0 +1,45 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: sqlite:////app/data/verity.db
+      DATA_DIR: /app/data
+      WORKER_ENABLED: "true"
+      APP_API_TOKENS: ${APP_API_TOKENS:-}
+      APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      CUSTOM_AI_API_KEY: ${CUSTOM_AI_API_KEY:-}
+      MAX_INPUT_CHARS: ${MAX_INPUT_CHARS:-200000}
+      MAX_UPLOAD_BYTES: ${MAX_UPLOAD_BYTES:-10485760}
+      MAX_TOTAL_UPLOAD_BYTES: ${MAX_TOTAL_UPLOAD_BYTES:-26214400}
+      MAX_SOURCE_BYTES: ${MAX_SOURCE_BYTES:-5242880}
+      MAX_CLAIMS: ${MAX_CLAIMS:-120}
+    volumes:
+      - verity_data:/app/data
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "${VERITY_BIND:-127.0.0.1}:8080:80"
+    restart: unless-stopped
+
+volumes:
+  verity_data:
